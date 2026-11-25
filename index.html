@@ -1,16 +1,30 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>liushiyi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="A glowing Christmas tree animation.">
+  <title>liushiyi · Merry Christmas</title>
   <style>
-    :html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-    canvas { display: block; width: 100%; height: 100%; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      overscroll-behavior: none;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: pan-y;
+    }
   </style>
 </head>
 <body>
-  <canvas id="scene"></canvas>
+  <canvas id="scene" aria-label="A rotating pink and golden Christmas tree beneath the words liushiyi and Merry Christmas"></canvas>
   <script>
     const canvas = document.getElementById('scene');
     const ctx = canvas.getContext('2d');
@@ -74,7 +88,7 @@
       const zz = p.x * sa + p.z * ca;
       const pitch = -0.25;
       const yp = p.y * Math.cos(pitch) - zz * Math.sin(pitch);
-      let zp = p.y * Math.sin(pitch) + zz * Math.cos(pitch) + 13;
+      const zp = p.y * Math.sin(pitch) + zz * Math.cos(pitch) + 13;
       if (zp <= 0.1) return null;
       const f = (height * 0.63) / zp;
       return { x: width / 2 + xz * f, y: height / 2 - (yp - 6) * f, z: zp };
@@ -106,14 +120,21 @@
         }
       }
 
+      // The only two text lines, scaled to fit both phones and desktop screens.
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = 'bold 64px Georgia, "Times New Roman", serif';
       ctx.shadowColor = 'rgba(255,255,255,.85)';
-      ctx.shadowBlur = 14;
+      ctx.shadowBlur = Math.max(8, Math.min(16, width * 0.035));
       ctx.fillStyle = '#fff';
-      ctx.fillText('liushiyi', width / 2, height * 0.14);
+
+      const nameSize = Math.min(64, Math.max(28, width * 0.105), height * 0.075);
+      ctx.font = 'bold ' + nameSize + 'px Georgia, "Times New Roman", serif';
+      ctx.fillText('liushiyi', width / 2, height * 0.125);
+
+      const greetingSize = Math.min(40, Math.max(17, width * 0.067), height * 0.052);
+      ctx.font = 'bold ' + greetingSize + 'px Georgia, "Times New Roman", serif';
+      ctx.fillText('Merry Christmas', width / 2, height * 0.195);
       ctx.restore();
 
       ctx.fillStyle = 'rgba(255,255,255,.9)';
@@ -129,7 +150,7 @@
       requestAnimationFrame(draw);
     }
 
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
     resize();
     draw();
   </script>
